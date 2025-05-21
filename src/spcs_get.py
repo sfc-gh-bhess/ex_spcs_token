@@ -20,10 +20,6 @@ def get_pat(pfname):
         return None
     return open(pfname, 'r').read()
 
-def get_endpoint(token, url, method='GET'):
-    headers = {'Authorization': f'Snowflake Token="{token}"'}
-    return requests.request(method=method, url=url, headers=headers)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--account_url', required=True, help="Account URL in the form of: <ORGNAME>-<ACCTNAME>.snowflakecomputing.com")
@@ -45,15 +41,15 @@ if __name__ == '__main__':
         if not pat:
             sys.exit("No PAT found")
         pat_generator = PATGenerator(account=args['account_url'], endpoint=args['endpoint'], pat=pat, role=args['role'])
-        get_token = pat_generator.get_token
+        auth_header = pat_generator.authorization_header
     else:
         lifetime = timedelta(minutes=args['lifetime'])
         renewal_delay = timedelta(minutes=args['renewal_delay'])
         endpoint_host = urlparse(args['endpoint']).hostname
         jwt_generator = KeypairGenerator(account=args['account_url'], user=args['user'], private_key=args['keyfile'], 
                                          endpoint=endpoint_host, lifetime=lifetime, renewal_delay=renewal_delay)
-        get_token = jwt_generator.get_token
+        auth_header = jwt_generator.authorization_header
 
-    token = get_token()
-    resp = get_endpoint(token, args['endpoint'])
+    headers = auth_header()
+    resp = requests.get(url=args['endpoint'], headers=headers)
     print(json.dumps(resp.json(), indent=2))

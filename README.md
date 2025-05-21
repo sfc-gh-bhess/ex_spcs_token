@@ -23,7 +23,7 @@ we need to know the hostname of the endpoint in SPCS that we are trying to acces
 These steps are encapsulated in a Python class at `src/pat/pat_gen.py`
 named `PATGenerator`. This class has a constructor that takes the following
 arguments:
-* `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com)
+* `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`)
 * `endpoint` - the SPCS endpoint hostname (of the form `<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app`)
 * `role` (optional) - The role to use when requesting the short-lived token
 * `pat` - the PAT itself
@@ -36,9 +36,9 @@ gen = PATGenerator(account='MYORG-MYACCT.snowflakecomputing.com',
                     pat='ey....')
 ```
 
-This class has one method of interest, `get_token()`. Call this `get_token()` method
-before every request to the SPCS endpoint, and include the result in the `Authorization` 
-header for the request in the form of `Snowflake Token="<TOKEN>"`. 
+This class has one method of interest, `authorization_header()`. 
+Call this `authorization_header()` method before every request to 
+the SPCS endpoint, and include the result in the headers. 
 
 ## Keypair JWT
 This method generates a JWT using the private key for a user. 
@@ -59,7 +59,7 @@ we need to know the hostname of the endpoint in SPCS that we are trying to acces
 These steps are encapsulated in a Python class at `src/keypair/keypair_gen.py`
 named `KeypairGenerator`. This class has a constructor that takes the following
 arguments:
-* `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com)
+* `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`)
 * `user` - the user associated with the private key
 * `private_key` - the filename for the private key
 * `lifetime` (optional) - the lifetime of the generated JWT
@@ -74,9 +74,9 @@ gen = KeypairGenerator(account='MYORG-MYACCT.snowflakecomputing.com',
                        endpoint='SOMEHASH-MYORG-MYACCT.snowflakecomputing.app')
 ```
 
-This class has one method of interest, `get_token()`. Call this `get_token()` method
-before every request to the SPCS endpoint, and include the result in the `Authorization` 
-header for the request in the form of `Snowflake Token="<TOKEN>"`. 
+This class has one method of interest, `authorization_header()`. 
+Call this `authorization_header()` method before every request to 
+the SPCS endpoint, and include the result in the headers. 
 
 ## Exmaple programs
 There are 3 helper programs to illustrate how to use these classes:

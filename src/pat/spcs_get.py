@@ -17,10 +17,6 @@ def get_pat(pfname):
         return None
     return open(pfname, 'r').read()
 
-def get_endpoint(token, url, method='GET'):
-    headers = {'Authorization': f'Snowflake Token="{token}"'}
-    return requests.request(method=method, url=url, headers=headers)
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--account_url', required=True, help="Account URL in the form of: <ORGNAME>-<ACCTNAME>.snowflakecomputing.com")
@@ -35,7 +31,7 @@ if __name__ == '__main__':
     if not pat:
         sys.exit("No PAT found")
     pat_generator = PATGenerator(account=args['account_url'], endpoint=args['endpoint'], pat=pat, role=args['role'])
-    get_token = pat_generator.get_token
-    token = get_token()
-    resp = get_endpoint(token, args['endpoint'])
+    auth_header = pat_generator.authorization_header
+    headers = auth_header()
+    resp = requests.get(url=args['endpoint'], headers=headers)
     print(json.dumps(resp.json(), indent=2))

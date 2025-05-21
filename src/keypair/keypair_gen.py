@@ -53,7 +53,7 @@ class KeypairGenerator(object):
 
         # Construct the fully qualified name of the user in uppercase.
         self.account_url = account
-        self.account = self.prepare_account_name_for_jwt(account)
+        self.account = self._prepare_account_name_for_jwt(account)
         self.user = user.upper()
         self.qualified_username = self.account + "." + self.user
 
@@ -67,7 +67,7 @@ class KeypairGenerator(object):
         self.token = None
         self.renew_time = datetime.now(timezone.utc)
 
-    def prepare_account_name_for_jwt(self, raw_account: Text) -> Text:
+    def _prepare_account_name_for_jwt(self, raw_account: Text) -> Text:
         """
         Prepare the account identifier for use in the JWT.
         For the JWT, the account identifier must not include the subdomain or any region or cloud provider information.
@@ -88,7 +88,7 @@ class KeypairGenerator(object):
         # Use uppercase for the account identifier.
         return account.upper()
 
-    def generate_jwt(self) -> Text:
+    def _generate_jwt(self) -> Text:
         """
         Generates a new JWT. If a JWT has been already been generated earlier, return the previously generated token unless the
         specified renewal time has passed.
@@ -105,7 +105,7 @@ class KeypairGenerator(object):
 
             # Prepare the fields for the payload.
             # Generate the public key fingerprint for the issuer in the payload.
-            public_key_fp = self.calculate_public_key_fingerprint(self.private_key)
+            public_key_fp = self._calculate_public_key_fingerprint(self.private_key)
 
             # Create our payload
             payload = {
@@ -133,31 +133,7 @@ class KeypairGenerator(object):
 
         return self.jwt_token
 
-    def token_exchange(self, token):
-        scope = self.endpoint
-        data = {
-            'grant_type': GRANT_TYPE,
-            'scope': scope,
-            'assertion': token,
-        }
-        logger.info(data)
-        url = f'https://{self.account_url}{TOKEN_EXCHANGE_PATH}'
-        logger.info("oauth url: %s" %url)
-        response = requests.post(url=url, data=data)
-        logger.info("snowflake jwt : %s" % response.text)
-        assert 200 == response.status_code, "unable to get snowflake token"
-        return response.text
-    
-    def get_token(self):
-        now = datetime.now()
-        if self.token is None or self.renew_time <= now:
-            jwt_token = self.generate_jwt()
-            self.token = self.token_exchange(jwt_token)
-            jwt_details = jwt.decode(self.token, options={"verify_signature": False})
-            self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
-        return self.token
-
-    def calculate_public_key_fingerprint(self, private_key: Text) -> Text:
+    def _calculate_public_key_fingerprint(self, private_key: Text) -> Text:
         """
         Given a private key in PEM format, return the public key fingerprint.
         :param private_key: private key string
@@ -175,3 +151,30 @@ class KeypairGenerator(object):
         logger.info("Public key fingerprint is %s", public_key_fp)
 
         return public_key_fp
+    
+    def _token_exchange(self, token):
+        scope = self.endpoint
+        data = {
+            'grant_type': GRANT_TYPE,
+            'scope': scope,
+            'assertion': token,
+        }
+        logger.info(data)
+        url = f'https://{self.account_url}{TOKEN_EXCHANGE_PATH}'
+        logger.info("oauth url: %s" %url)
+        response = requests.post(url=url, data=data)
+        logger.info("snowflake jwt : %s" % response.text)
+        assert 200 == response.status_code, "unable to get snowflake token"
+        return response.text
+    
+    def get_token(self):
+        now = datetime.now()
+        if self.token is None or self.renew_time <= now:
+            jwt_token = self._generate_jwt()
+            self.token = self._token_exchange(jwt_token)
+            jwt_details = jwt.decode(self.token, options={"verify_signature": False})
+            self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
+        return self.token
+
+    def authorization_header(self):
+        return {'Authorization': f'Snowflake Token="{self.get_token()}"'}

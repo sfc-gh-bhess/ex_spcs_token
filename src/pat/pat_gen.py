@@ -25,7 +25,7 @@ class PATGenerator:
         self.token = None
         self.renew_time = datetime.now()
     
-    def get_new_token(self) -> Text:
+    def _get_new_token(self) -> Text:
         endpoint_host = urlparse(self.endpoint).hostname
         scope = f'session:scope:{self.role.upper()} {endpoint_host}' if self.role else f'{endpoint_host}'
         data = {
@@ -41,7 +41,10 @@ class PATGenerator:
     def get_token(self) -> Text:
         now = datetime.now(timezone.utc)
         if self.token is None or self.renew_time <= now:
-            self.token = self.get_new_token()
+            self.token = self._get_new_token()
             jwt_details = jwt.decode(self.token, options={"verify_signature": False})
             self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
         return self.token
+
+    def authorization_header(self):
+        return {'Authorization': f'Snowflake Token="{self.get_token()}"'}
