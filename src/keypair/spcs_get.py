@@ -1,22 +1,9 @@
-import os
 import argparse
 import requests
 import json
 from keypair_gen import KeypairGenerator
 from datetime import timedelta
 from urllib.parse import urlparse
-
-def get_pat_filename():
-    files = os.listdir()
-    pat_files = [x for x in files if x.endswith('-token-secret.txt')]
-    if len(pat_files) < 1:
-        return None
-    return pat_files[0]
-
-def get_pat(pfname):
-    if not pfname or not os.path.isfile(pfname):
-        return None
-    return open(pfname, 'r').read()
 
 def get_endpoint(token, url, method='GET'):
     headers = {'Authorization': f'Snowflake Token="{token}"'}
