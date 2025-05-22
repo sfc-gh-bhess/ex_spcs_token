@@ -39,7 +39,7 @@ class PATGenerator:
         return resp.text
 
     def get_token(self) -> Text:
-        now = datetime.now(timezone.utc)
+        now = datetime.now()
         if self.token is None or self.renew_time <= now:
             self.token = self._get_new_token()
             jwt_details = jwt.decode(self.token, options={"verify_signature": False})
