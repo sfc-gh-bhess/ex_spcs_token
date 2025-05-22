@@ -24,7 +24,7 @@ class PATGenerator:
         self.role = role
         self.token = None
         self.renew_time = datetime.now()
-    
+
     def _get_new_token(self) -> Text:
         endpoint_host = urlparse(self.endpoint).hostname
         scope = f'session:scope:{self.role.upper()} {endpoint_host}' if self.role else f'{endpoint_host}'
