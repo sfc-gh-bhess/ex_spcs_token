@@ -62,6 +62,7 @@ arguments:
 * `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`)
 * `user` - the user associated with the private key
 * `private_key` - the filename for the private key
+* `password` - (optional) - the password for the private key file
 * `lifetime` (optional) - the lifetime of the generated JWT
 * `renewal_delay` (optional) - the delay after which a new JWT should be generated (generally, a few minutes less than the `lifetime`)
 * `endpoint` - the SPCS endpoint hostname (of the form `<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app`)

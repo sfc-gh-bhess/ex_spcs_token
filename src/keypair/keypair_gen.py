@@ -34,7 +34,7 @@ class KeypairGenerator(object):
     RENEWAL_DELTA = timedelta(minutes=54)  # Tokens will be renewed after 54 minutes
     ALGORITHM = "RS256"  # Tokens will be generated using RSA with SHA256
 
-    def __init__(self, account: Text, user: Text, private_key: Text, endpoint: Text,
+    def __init__(self, account: Text, user: Text, private_key: Text, endpoint: Text, password: Text = None,
                  lifetime: timedelta = LIFETIME, renewal_delay: timedelta = RENEWAL_DELTA):
         """
         __init__ creates an object that generates JWTs for the specified user, account identifier, and private key.
@@ -42,8 +42,9 @@ class KeypairGenerator(object):
         :param user: The Snowflake username.
         :param private_key: Private key file used for signing the JWTs.
         :param endpoint: The endpoint you are trying to access (just the hostname here: <HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app)
-        :param lifetime: The number of minutes (as a timedelta) during which the key will be valid.
-        :param renewal_delay: The number of minutes (as a timedelta) from now after which the JWT generator should renew the JWT.
+        :param password: (optional) Password for the private key file (if applicable).
+        :param lifetime: (optional) The number of minutes (as a timedelta) during which the key will be valid.
+        :param renewal_delay: (optional) The number of minutes (as a timedelta) from now after which the JWT generator should renew the JWT.
         """
 
         logger.info(
@@ -62,7 +63,7 @@ class KeypairGenerator(object):
         self.jwt_renew_time = datetime.now(timezone.utc)
         self.jwt_token = None
         pemlines = open(private_key, 'rb').read()
-        self.private_key = load_pem_private_key(pemlines, None, default_backend())
+        self.private_key = load_pem_private_key(pemlines, password, default_backend())
         self.endpoint = endpoint
         self.token = None
         self.renew_time = datetime.now(timezone.utc)
