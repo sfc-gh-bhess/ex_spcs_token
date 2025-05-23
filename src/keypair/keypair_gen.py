@@ -153,7 +153,10 @@ class KeypairGenerator(object):
 
         return public_key_fp
     
-    def _token_exchange(self, token):
+    def _token_exchange(self, token) -> Text:
+        return self._exchange_response(token).text
+    
+    def _exchange_response(self, token) -> requests.models.Response:
         scope = self.endpoint
         data = {
             'grant_type': GRANT_TYPE,
@@ -168,7 +171,7 @@ class KeypairGenerator(object):
         assert 200 == response.status_code, "unable to get snowflake token"
         return response.text
     
-    def get_token(self):
+    def get_token(self) -> Text:
         now = datetime.now()
         if self.token is None or self.renew_time <= now:
             jwt_token = self._generate_jwt()
@@ -177,5 +180,5 @@ class KeypairGenerator(object):
             self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
         return self.token
 
-    def authorization_header(self):
+    def authorization_header(self) -> dict:
         return {'Authorization': f'Snowflake Token="{self.get_token()}"'}

@@ -2,7 +2,7 @@ import os
 import requests
 from urllib.parse import urlparse
 from typing import Text
-from datetime import timezone, datetime
+from datetime import datetime
 import jwt
 
 TOKEN_EXCHANGE_PATH = '/oauth/token'
@@ -26,6 +26,9 @@ class PATGenerator:
         self.renew_time = datetime.now()
 
     def _get_new_token(self) -> Text:
+        return self._exchange_response().text
+    
+    def _exchange_response(self) -> requests.models.Response:
         endpoint_host = urlparse(self.endpoint).hostname
         scope = f'session:scope:{self.role.upper()} {endpoint_host}' if self.role else f'{endpoint_host}'
         data = {
@@ -36,7 +39,7 @@ class PATGenerator:
         }
         url = f'https://{self.account}{TOKEN_EXCHANGE_PATH}'
         resp = requests.post(url=url, data=data)
-        return resp.text
+        return resp
 
     def get_token(self) -> Text:
         now = datetime.now()
@@ -46,5 +49,5 @@ class PATGenerator:
             self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
         return self.token
 
-    def authorization_header(self):
+    def authorization_header(self) -> dict:
         return {'Authorization': f'Snowflake Token="{self.get_token()}"'}
