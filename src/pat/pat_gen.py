@@ -18,7 +18,7 @@ class PATGenerator:
         :param pat: The PAT to use.
         :param role: The role to use when requesting the short-lived token (optional).
         """        
-        self.account = account
+        self.account = account.replace('_', '-')
         self.endpoint = endpoint        
         self.pat = open(pat, 'r').read() if os.path.isfile(pat) else pat
         self.role = role

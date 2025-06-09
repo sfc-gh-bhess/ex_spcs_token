@@ -53,7 +53,7 @@ class KeypairGenerator(object):
             account, user, lifetime, renewal_delay)
 
         # Construct the fully qualified name of the user in uppercase.
-        self.account_url = account
+        self.account_url = account.replace('_', '-')
         self.account = self._prepare_account_name_for_jwt(account)
         self.user = user.upper()
         self.qualified_username = self.account + "." + self.user
