@@ -39,6 +39,7 @@ class PATGenerator:
         }
         url = f'https://{self.account}{TOKEN_EXCHANGE_PATH}'
         resp = requests.post(url=url, data=data)
+        assert 200 == resp.status_code, "unable to get snowflake token"
         return resp
 
     def get_token(self) -> Text:
