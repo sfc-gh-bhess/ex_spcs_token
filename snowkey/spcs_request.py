@@ -8,8 +8,8 @@ import sys
 import argparse
 import requests
 import json
-from pat import PATGenerator
-from keypair import KeypairGenerator
+from .pat import PATGenerator
+from .keypair import KeypairGenerator
 from datetime import timedelta
 from urllib.parse import urlparse
 
