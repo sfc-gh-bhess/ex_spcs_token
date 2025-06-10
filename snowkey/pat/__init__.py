@@ -1,1 +1,1 @@
-from pat_gen import PATGenerator
+from .pat_gen import PATGenerator

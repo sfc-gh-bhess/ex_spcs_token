@@ -1,1 +1,1 @@
-from keypair_gen import KeypairGenerator
+from .keypair_gen import KeypairGenerator
