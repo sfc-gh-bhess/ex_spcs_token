@@ -8,7 +8,7 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
     name="snowkey",
-    packages=["snowkey","snowkey.keypair", "snowkey.pat"],
+    packages=find_packages(),
     version='0.0.1',
     description='Helper tools for getting access tokens for Snowflake REST APIs',
     long_description=long_description,
