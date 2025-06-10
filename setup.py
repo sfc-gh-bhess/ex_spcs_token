@@ -7,7 +7,7 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="st_oauth",
+    name="snowkey",
     packages=find_packages(),
     version='0.0.1',
     description='Helper tools for getting access tokens for Snowflake REST APIs',
@@ -16,5 +16,5 @@ setup(
     author='Brian Hess',
     author_email='brian.hess@snowflake.com',
     license='LICENSE.txt',
-    install_requires=['requests', 'jwt', 'urllib3']
+    install_requires=['requests', 'jwt']
 )
