@@ -11,6 +11,17 @@ In both cases, the token (either the PAT or the JWT generated from the private k
 need to be exchanged for a short-lived token at a Snowflake-hosted endpoint (`/oauth/token`).
 In general, PAT is slightly simpler and probably should be your first choice.
 
+## Package Installation
+You can install directly from github with this command:
+```
+pip install git+https://github.com/sfc-gh-bhess/ex_spcs_token.git
+```
+
+To install directly from github via pipenv, use:
+```
+pipenv install git+https://github.com/sfc-gh-bhess/ex_spcs_token.git#egg=snowkey
+```
+
 ## Programmatic Access Token
 This method uses a PAT to access the endpoint in SPCS.
 
@@ -20,7 +31,7 @@ We can do that at the Snowflake-hosted endpoint
 we need to know the hostname of the endpoint in SPCS that we are trying to access
 (of the form `<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app`).
 
-These steps are encapsulated in a Python class at `src/pat/pat_gen.py`
+These steps are encapsulated in a Python class at `snowkey/pat/pat_gen.py`
 named `PATGenerator`. This class has a constructor that takes the following
 arguments:
 * `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`)
@@ -30,6 +41,8 @@ arguments:
 
 For example:
 ```python
+from snowkey.pat import PatGenerator
+
 gen = PATGenerator(account='MYORG-MYACCT.snowflakecomputing.com', 
                     endpoint='SOMEHASH-MYORG-MYACCT.snowflakecomputing.app', 
                     role='MYROLE', 
@@ -56,7 +69,7 @@ short-lived access token. We can do that at the Snowflake-hosted endpoint
 we need to know the hostname of the endpoint in SPCS that we are trying to access
 (of the form `<HASH>-<ORGNAME>-<ACCTNAME>.snowflakecomputing.app`).
 
-These steps are encapsulated in a Python class at `src/keypair/keypair_gen.py`
+These steps are encapsulated in a Python class at `snowkey/keypair/keypair_gen.py`
 named `KeypairGenerator`. This class has a constructor that takes the following
 arguments:
 * `account` - the Snowflake account URL (of the form `<ORGNAME>-<ACCTNAME>.snowflakecomputing.com`)
@@ -69,6 +82,8 @@ arguments:
 
 For example:
 ```python
+from snowkey.keypair import KeypairGenerator
+
 gen = KeypairGenerator(account='MYORG-MYACCT.snowflakecomputing.com', 
                        user='MYUSER', 
                        private_key='/path/to/private_key.p8', 
@@ -81,9 +96,9 @@ the SPCS endpoint, and include the result in the headers.
 
 ## Exmaple programs
 There are 3 helper programs to illustrate how to use these classes:
-* `src/pat/spcs_get.py` - uses a pat to perform a `GET` request to an SPCS endpoint.
-* `src/keypair/spcs_get.py` - uses a private key to perform a `GET` request to an SPCS endpoint.
-* `src/spcs_get.py` - uses either a private key or a pat to perform a `GET` request to an SPCS endpoint.
+* `snowkey/pat/spcs_get.py` - uses a pat to perform a `GET` request to an SPCS endpoint.
+* `snowkey/keypair/spcs_get.py` - uses a private key to perform a `GET` request to an SPCS endpoint.
+* `snowkey/spcs_get.py` - uses either a private key or a pat to perform a `GET` request to an SPCS endpoint.
 
 For any of them, run the following to see the usage:
 ```bash

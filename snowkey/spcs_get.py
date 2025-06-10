@@ -1,10 +1,15 @@
+from pathlib import Path                # Needed
+import sys                              # just
+path_root = Path(__file__).parents[1]   # for
+sys.path.append(str(path_root))         # tests
+
 import os
 import sys
 import argparse
 import requests
 import json
-from pat.pat_gen import PATGenerator
-from keypair.keypair_gen import KeypairGenerator
+from snowkey.pat import PATGenerator
+from snowkey.keypair import KeypairGenerator
 from datetime import timedelta
 from urllib.parse import urlparse
 
@@ -23,7 +28,9 @@ def get_pat(pfname):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--account_url', required=True, help="Account URL in the form of: <ORGNAME>-<ACCTNAME>.snowflakecomputing.com")
-    parser.add_argument('--endpoint', required=True, help="SPCS reqeust URL (including 'https://')")
+    parser.add_argument('--url', required=True, help="SPCS reqeust URL (including 'https://')")
+    parser.add_argument('--method', required=False, help="HTTP method (GET, POST, etc)", default='GET')
+    parser.add_argument('--data', required=False, help="Payload for HTTP request as a JSON string")
     parser.add_argument('--role', required=False, help="Snowflake ROLE to use (optional, for use with PAT)")
     parser.add_argument('--user', required=False, help="Snowflake USER associated with the private key (required, for use with keypair)")
     parser.add_argument('--lifetime', required=False, help='The number of minutes during which the key will be valid.', default=59)
@@ -40,16 +47,17 @@ if __name__ == '__main__':
         pat = args['pat'] if args['pat'] else get_pat(args['patfile'] if args['patfile'] else get_pat_filename())
         if not pat:
             sys.exit("No PAT found")
-        pat_generator = PATGenerator(account=args['account_url'], endpoint=args['endpoint'], pat=pat, role=args['role'])
+        pat_generator = PATGenerator(account=args['account_url'], endpoint=args['url'], pat=pat, role=args['role'])
         auth_header = pat_generator.authorization_header
     else:
         lifetime = timedelta(minutes=args['lifetime'])
         renewal_delay = timedelta(minutes=args['renewal_delay'])
-        endpoint_host = urlparse(args['endpoint']).hostname
+        endpoint_host = urlparse(args['url']).hostname
         jwt_generator = KeypairGenerator(account=args['account_url'], user=args['user'], private_key=args['keyfile'], 
                                          endpoint=endpoint_host, lifetime=lifetime, renewal_delay=renewal_delay)
         auth_header = jwt_generator.authorization_header
 
     headers = auth_header()
-    resp = requests.get(url=args['endpoint'], headers=headers)
+    reqargs = {k:v for k,v in args.items() if k in ('method', 'data', 'url')}
+    resp = requests.request(headers=headers, **reqargs)
     print(json.dumps(resp.json(), indent=2))

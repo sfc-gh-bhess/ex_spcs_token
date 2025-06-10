@@ -48,9 +48,9 @@ class KeypairGenerator(object):
         """
 
         logger.info(
-            """Creating JWTGenerator with arguments
-            account : %s, user : %s, lifetime : %s, renewal_delay : %s""",
-            account, user, lifetime, renewal_delay)
+            """Creating KeypairGenerator with arguments
+            account : %s, user : %s, endpoint : %s, lifetime : %s, renewal_delay : %s""",
+            account, user, endpoint, lifetime, renewal_delay)
 
         # Construct the fully qualified name of the user in uppercase.
         self.account_url = account.replace('_', '-')
@@ -174,6 +174,8 @@ class KeypairGenerator(object):
     def get_token(self) -> Text:
         now = datetime.now()
         if self.token is None or self.renew_time <= now:
+            logger.info("Getting new access token because the present time (%s) is later than the renewal time (%s)",
+                        now, self.renew_time)
             jwt_token = self._generate_jwt()
             self.token = self._token_exchange(jwt_token)
             jwt_details = jwt.decode(self.token, options={"verify_signature": False})

@@ -4,6 +4,10 @@ from urllib.parse import urlparse
 from typing import Text
 from datetime import datetime
 import jwt
+import logging
+from typing import Text
+
+logger = logging.getLogger(__name__)
 
 TOKEN_EXCHANGE_PATH = '/oauth/token'
 GRANT_TYPE = 'urn:ietf:params:oauth:grant-type:token-exchange'
@@ -18,6 +22,12 @@ class PATGenerator:
         :param pat: The PAT to use.
         :param role: The role to use when requesting the short-lived token (optional).
         """        
+
+        logger.info(
+            """Creating PATGenerator with arguments
+            account : %s, endpoint : %s, role : %s""",
+            account, endpoint, role)
+
         self.account = account.replace('_', '-')
         self.endpoint = endpoint        
         self.pat = open(pat, 'r').read() if os.path.isfile(pat) else pat
@@ -37,14 +47,19 @@ class PATGenerator:
             'subject_token': self.pat,
             'subject_token_type': SUBJECT_TOKEN_TYPE
         }
+        logger.info(data)
         url = f'https://{self.account}{TOKEN_EXCHANGE_PATH}'
-        resp = requests.post(url=url, data=data)
-        assert 200 == resp.status_code, "unable to get snowflake token"
-        return resp
+        logger.info("oauth url: %s" %url)
+        response = requests.post(url=url, data=data)
+        logger.info("snowflake pat : %s" % response.text)
+        assert 200 == response.status_code, "unable to get snowflake token"
+        return response
 
     def get_token(self) -> Text:
         now = datetime.now()
         if self.token is None or self.renew_time <= now:
+            logger.info("Getting new access token because the present time (%s) is later than the renewal time (%s)",
+                        now, self.renew_time)
             self.token = self._get_new_token()
             jwt_details = jwt.decode(self.token, options={"verify_signature": False})
             self.renew_time = datetime.fromtimestamp(jwt_details['exp'])
