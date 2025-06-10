@@ -100,26 +100,26 @@ There is a helper program to illustrate how to use these classes:
 
 To use it, run:
 ```bash
-python -m snowkey.spcs_get --help
+python -m snowkey.spcs_request --help
 ```
 
 ### Example: PAT
 ```bash
-python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+python -m snowkey.spcs_request --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
  --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
  --role MYROLE --patfile '/path/to/pat'
 ```
 
 ### Example: Private Key
 ```bash
-python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+python -m snowkey.spcs_request --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
  --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
  --keyfile '/path/to/private_key.p8' --user MYUSER
 ```
 
 ### Example: PAT POST with data
 ```bash
-python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+python -m snowkey.spcs_request --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
  --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
  --method "POST" --json '{"a": 1, "b": "one"}' --role MYROLE --patfile '/path/to/pat'
 ```
