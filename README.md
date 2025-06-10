@@ -95,26 +95,31 @@ Call this `authorization_header()` method before every request to
 the SPCS endpoint, and include the result in the headers. 
 
 ## Exmaple programs
-There are 3 helper programs to illustrate how to use these classes:
-* `snowkey/pat/spcs_get.py` - uses a pat to perform a `GET` request to an SPCS endpoint.
-* `snowkey/keypair/spcs_get.py` - uses a private key to perform a `GET` request to an SPCS endpoint.
-* `snowkey/spcs_get.py` - uses either a private key or a pat to perform a `GET` request to an SPCS endpoint.
+There is a helper program to illustrate how to use these classes:
+* `snowkey/spcs_request.py` - uses either a private key or a pat to perform an HTTP request to an SPCS endpoint.
 
-For any of them, run the following to see the usage:
+To use it, run:
 ```bash
-python spcs_get.py --help
+python -m snowkey.spcs_get --help
 ```
 
 ### Example: PAT
 ```bash
-python spcs_get.py --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
  --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
  --role MYROLE --patfile '/path/to/pat'
 ```
 
 ### Example: Private Key
 ```bash
-python spcs_get.py --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
  --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
  --keyfile '/path/to/private_key.p8' --user MYUSER
+```
+
+### Example: PAT POST with data
+```bash
+python -m snowkey.spcs_get --account_url 'MYORG-MYACCT.snowflakecomputing.com' \
+ --endpoint 'https://mzbqa5c-myorg-myacct.snowflakecomputing.app/some/path' \
+ --method "POST" --json '{"a": 1, "b": "one"}' --role MYROLE --patfile '/path/to/pat'
 ```
