@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snowkey"
+authors = [
+    {name = "Brian Hess", email = "brian.hess@snowflake.com"}
+]
+description = "Helper tools for getting access tokens for Snowflake REST APIs"
+version = "0.0.1"
+readme = "README.md"
+requires-python = ">=3.7"
+dependencies = [
+    "requests > 2.26.0",
+    "jwt"
+]
