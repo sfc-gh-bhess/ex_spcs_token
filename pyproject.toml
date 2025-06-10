@@ -15,3 +15,7 @@ dependencies = [
     "requests > 2.26.0",
     "jwt"
 ]
+
+[project.packages]
+include = ["snowkey"]
+from = "."
