@@ -1,15 +1,15 @@
-from pathlib import Path                # Needed
-import sys                              # just
-path_root = Path(__file__).parents[1]   # for
-sys.path.append(str(path_root))         # tests
+# from pathlib import Path                # Needed
+# import sys                              # just
+# path_root = Path(__file__).parents[1]   # for
+# sys.path.append(str(path_root))         # tests
 
 import os
 import sys
 import argparse
 import requests
 import json
-from snowkey.pat import PATGenerator
-from snowkey.keypair import KeypairGenerator
+from pat import PATGenerator
+from keypair import KeypairGenerator
 from datetime import timedelta
 from urllib.parse import urlparse
 
