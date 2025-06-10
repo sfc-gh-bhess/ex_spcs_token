@@ -168,7 +168,7 @@ class KeypairGenerator(object):
         logger.info("oauth url: %s" %url)
         response = requests.post(url=url, data=data)
         logger.info("snowflake jwt : %s" % response.text)
-        assert 200 == response.status_code, "unable to get snowflake token"
+        assert 200 == response.status_code, f"unable to get snowflake token: {response.text}"
         return response.text
     
     def get_token(self) -> Text:
